@@ -1,7 +1,6 @@
 import {
   Flex,
   Table,
-  Progress,
   Icon,
   Tbody,
   Td,
@@ -10,6 +9,7 @@ import {
   Thead,
   Tr,
   useColorModeValue,
+  MenuButton,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import {
@@ -24,7 +24,16 @@ import Card from "components/card/Card";
 import Menu from "components/menu/MainMenu";
 
 // Assets
-import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
+import {
+  MdCheckCircle,
+  MdCancel,
+  MdOutlineError,
+  MdOutlineMoreHoriz,
+  MdPlusOne,
+  MdOutlinePlusOne,
+  MdOutlineHdrPlus,
+  MdAdd,
+} from "react-icons/md";
 export default function ColumnsTable(props) {
   const { columnsData, tableData } = props;
 
@@ -55,35 +64,39 @@ export default function ColumnsTable(props) {
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
   return (
     <Card
-      direction='column'
-      w='100%'
-      px='0px'
-      overflowX={{ sm: "scroll", lg: "hidden" }}>
-      <Flex px='25px' justify='space-between' mb='10px' align='center'>
+      direction="column"
+      w="100%"
+      px="0px"
+      overflowX={{ sm: "scroll", lg: "hidden" }}
+    >
+      <Flex px="25px" justify="space-between" mb="10px" align="center">
         <Text
           color={textColor}
-          fontSize='22px'
-          fontWeight='700'
-          lineHeight='100%'>
-          Complex Table
+          fontSize="22px"
+          fontWeight="700"
+          lineHeight="100%"
+        >
+          Registered Conselors
         </Text>
-        <Menu />
+        <Icon as={MdAdd} color={"blue.700"} w="24px" h="24px" />
       </Flex>
-      <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
+      <Table {...getTableProps()} variant="simple" color="gray.500" mb="24px">
         <Thead>
           {headerGroups.map((headerGroup, index) => (
             <Tr {...headerGroup.getHeaderGroupProps()} key={index}>
               {headerGroup.headers.map((column, index) => (
                 <Th
                   {...column.getHeaderProps(column.getSortByToggleProps())}
-                  pe='10px'
+                  pe="10px"
                   key={index}
-                  borderColor={borderColor}>
+                  borderColor={borderColor}
+                >
                   <Flex
-                    justify='space-between'
-                    align='center'
+                    justify="space-between"
+                    align="center"
                     fontSize={{ sm: "10px", lg: "12px" }}
-                    color='gray.400'>
+                    color="gray.400"
+                  >
                     {column.render("Header")}
                   </Flex>
                 </Th>
@@ -100,17 +113,17 @@ export default function ColumnsTable(props) {
                   let data = "";
                   if (cell.column.Header === "NAME") {
                     data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                      <Text color={textColor} fontSize="sm" fontWeight="700">
                         {cell.value}
                       </Text>
                     );
                   } else if (cell.column.Header === "STATUS") {
                     data = (
-                      <Flex align='center'>
+                      <Flex align="center">
                         <Icon
-                          w='24px'
-                          h='24px'
-                          me='5px'
+                          w="24px"
+                          h="24px"
+                          me="5px"
                           color={
                             cell.value === "Approved"
                               ? "green.500"
@@ -130,28 +143,16 @@ export default function ColumnsTable(props) {
                               : null
                           }
                         />
-                        <Text color={textColor} fontSize='sm' fontWeight='700'>
+                        <Text color={textColor} fontSize="sm" fontWeight="700">
                           {cell.value}
                         </Text>
                       </Flex>
                     );
                   } else if (cell.column.Header === "DATE") {
                     data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                      <Text color={textColor} fontSize="sm" fontWeight="700">
                         {cell.value}
                       </Text>
-                    );
-                  } else if (cell.column.Header === "PROGRESS") {
-                    data = (
-                      <Flex align='center'>
-                        <Progress
-                          variant='table'
-                          colorScheme='brandScheme'
-                          h='8px'
-                          w='108px'
-                          value={cell.value}
-                        />
-                      </Flex>
                     );
                   }
                   return (
@@ -159,10 +160,11 @@ export default function ColumnsTable(props) {
                       {...cell.getCellProps()}
                       key={index}
                       fontSize={{ sm: "14px" }}
-                      maxH='30px !important'
-                      py='8px'
+                      maxH="30px !important"
+                      py="8px"
                       minW={{ sm: "150px", md: "200px", lg: "auto" }}
-                      borderColor='transparent'>
+                      borderColor="transparent"
+                    >
                       {data}
                     </Td>
                   );

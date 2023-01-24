@@ -60,7 +60,7 @@ export default function ColumnsTable(props) {
           fontSize='22px'
           fontWeight='700'
           lineHeight='100%'>
-          4-Column Table
+          Incoming Patients
         </Text>
         <Menu />
       </Flex>
@@ -101,7 +101,7 @@ export default function ColumnsTable(props) {
                         </Text>
                       </Flex>
                     );
-                  } else if (cell.column.Header === "PROGRESS") {
+                  } else if (cell.column.Header === "PHONE") {
                     data = (
                       <Flex align='center'>
                         <Text
@@ -109,11 +109,11 @@ export default function ColumnsTable(props) {
                           color={textColor}
                           fontSize='sm'
                           fontWeight='700'>
-                          {cell.value}%
+                          {cell.value}
                         </Text>
                       </Flex>
                     );
-                  } else if (cell.column.Header === "QUANTITY") {
+                  } else if (cell.column.Header === "SYMPTOMPS") {
                     data = (
                       <Text color={textColor} fontSize='sm' fontWeight='700'>
                         {cell.value}
