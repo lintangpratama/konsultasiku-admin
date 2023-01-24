@@ -24,11 +24,10 @@
 import { Box, Icon, SimpleGrid, useColorModeValue } from "@chakra-ui/react";
 // Assets
 // Custom components
-import MiniCalendar from "components/calendar/MiniCalendar";
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
 import React from "react";
-import { MdAttachMoney, MdBarChart, MdPerson } from "react-icons/md";
+import { MdBarChart, MdPerson } from "react-icons/md";
 import ComplexTable from "views/admin/default/components/ComplexTable";
 import { columnsDataComplex } from "views/admin/default/variables/columnsData";
 import tableDataComplex from "views/admin/default/variables/tableDataComplex.json";
@@ -64,9 +63,7 @@ export default function UserReports() {
               w="56px"
               h="56px"
               bg={boxBg}
-              icon={
-                <Icon w="32px" h="32px" as={MdPerson} color={brandColor} />
-              }
+              icon={<Icon w="32px" h="32px" as={MdPerson} color={brandColor} />}
             />
           }
           name="Conselors"

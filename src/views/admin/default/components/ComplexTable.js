@@ -9,7 +9,6 @@ import {
   Thead,
   Tr,
   useColorModeValue,
-  MenuButton,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import {
@@ -21,17 +20,12 @@ import {
 
 // Custom components
 import Card from "components/card/Card";
-import Menu from "components/menu/MainMenu";
 
 // Assets
 import {
   MdCheckCircle,
   MdCancel,
   MdOutlineError,
-  MdOutlineMoreHoriz,
-  MdPlusOne,
-  MdOutlinePlusOne,
-  MdOutlineHdrPlus,
   MdAdd,
 } from "react-icons/md";
 export default function ColumnsTable(props) {
