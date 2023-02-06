@@ -22,20 +22,37 @@
 
 // Chakra imports
 import { Box, Icon, SimpleGrid, useColorModeValue } from "@chakra-ui/react";
+import axios from "axios";
 // Assets
 // Custom components
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
-import React from "react";
+import React, { useState } from "react";
+import { useEffect } from "react";
 import { MdBarChart, MdPerson } from "react-icons/md";
 import ComplexTable from "views/admin/default/components/ComplexTable";
 import { columnsDataComplex } from "views/admin/default/variables/columnsData";
-import tableDataComplex from "views/admin/default/variables/tableDataComplex.json";
 
 export default function UserReports() {
   // Chakra Color Mode
   const brandColor = useColorModeValue("brand.500", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    if (!localStorage.getItem("admin-konsultasiku")) {
+      window.location.href = "/#/auth/sign-in";
+    } else {
+      const getConselors = () => {
+        axios
+          .get("https://api.andil.id/konsultasiku/conselors")
+          .then((res) => {
+            setData(res.data.conselors.ResponseConselor)})
+          .catch((err) => console.log(err));
+      };
+      getConselors();
+    }
+  }, []);
+
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       <SimpleGrid
@@ -67,13 +84,13 @@ export default function UserReports() {
             />
           }
           name="Conselors"
-          value="2"
+          value={data !== null ? data.length : "-"}
         />
       </SimpleGrid>
-      <SimpleGrid columns={{ base: 1, md: 1, xl: 2 }} gap="20px" mb="20px">
+      <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
         <ComplexTable
           columnsData={columnsDataComplex}
-          tableData={tableDataComplex}
+          tableData={data}
         />
         {/* <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px">
           <MiniCalendar h="100%" minW="100%" selectRange={false} />

@@ -19,10 +19,22 @@ export const columnsDataCheck = [
 export const columnsDataComplex = [
   {
     Header: "NAME",
-    accessor: "name",
+    accessor: "nama_conselor",
   },
   {
-    Header: "STATUS",
-    accessor: "status",
+    Header: "PRICE",
+    accessor: "harga",
   },
+  {
+    Header: "HIMPSI NUMBER",
+    accessor: "no_himpsi",
+  },
+  {
+    Header: "PERMISSION NUMBER",
+    accessor: "no_izin",
+  },
+  {
+    Header: "ACTIONS",
+    accessor: "id_conselor",
+  }
 ];

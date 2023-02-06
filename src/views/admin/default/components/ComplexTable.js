@@ -22,17 +22,14 @@ import {
 import Card from "components/card/Card";
 
 // Assets
-import {
-  MdCheckCircle,
-  MdCancel,
-  MdOutlineError,
-  MdAdd,
-} from "react-icons/md";
+import { MdAdd, MdDelete, MdEdit } from "react-icons/md";
+import { Link } from "react-router-dom";
+import axios from "axios";
 export default function ColumnsTable(props) {
   const { columnsData, tableData } = props;
 
   const columns = useMemo(() => columnsData, [columnsData]);
-  const data = useMemo(() => tableData, [tableData]);
+  const data = useMemo(() => tableData === null ? [] : tableData, [tableData]);
 
   const tableInstance = useTable(
     {
@@ -44,18 +41,20 @@ export default function ColumnsTable(props) {
     usePagination
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    page,
-    prepareRow,
-    initialState,
-  } = tableInstance;
-  initialState.pageSize = 5;
+  const { getTableProps, getTableBodyProps, headerGroups, page, prepareRow } =
+    tableInstance;
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
+
+  const handleDeleteClick = (id) => {
+    axios
+      .delete(`https://api.andil.id/konsultasiku/conselor/${id}`, data)
+      .then((data) => {
+        window.location.reload();
+      })
+      .catch((err) => console.log(err));
+  };
   return (
     <Card
       direction="column"
@@ -72,7 +71,15 @@ export default function ColumnsTable(props) {
         >
           Registered Conselors
         </Text>
-        <Icon as={MdAdd} color={"blue.700"} w="24px" h="24px" />
+        <Link to="/add-conselor">
+          <Icon
+            as={MdAdd}
+            cursor="pointer"
+            color={"blue.700"}
+            w="24px"
+            h="24px"
+          />
+        </Link>
       </Flex>
       <Table {...getTableProps()} variant="simple" color="gray.500" mb="24px">
         <Thead>
@@ -111,42 +118,45 @@ export default function ColumnsTable(props) {
                         {cell.value}
                       </Text>
                     );
-                  } else if (cell.column.Header === "STATUS") {
+                  } else if (cell.column.Header === "PRICE") {
                     data = (
-                      <Flex align="center">
-                        <Icon
-                          w="24px"
-                          h="24px"
-                          me="5px"
-                          color={
-                            cell.value === "Approved"
-                              ? "green.500"
-                              : cell.value === "Disable"
-                              ? "red.500"
-                              : cell.value === "Error"
-                              ? "orange.500"
-                              : null
-                          }
-                          as={
-                            cell.value === "Approved"
-                              ? MdCheckCircle
-                              : cell.value === "Disable"
-                              ? MdCancel
-                              : cell.value === "Error"
-                              ? MdOutlineError
-                              : null
-                          }
-                        />
-                        <Text color={textColor} fontSize="sm" fontWeight="700">
-                          {cell.value}
-                        </Text>
-                      </Flex>
+                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                        Rp{cell.value}
+                      </Text>
                     );
-                  } else if (cell.column.Header === "DATE") {
+                  } else if (cell.column.Header === "HIMPSI NUMBER") {
                     data = (
                       <Text color={textColor} fontSize="sm" fontWeight="700">
                         {cell.value}
                       </Text>
+                    );
+                  } else if (cell.column.Header === "PERMISSION NUMBER") {
+                    data = (
+                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                        {cell.value}
+                      </Text>
+                    );
+                  } else if (cell.column.Header === "ACTIONS") {
+                    data = (
+                      <>
+                        <Link to={`/edit-conselor/${cell.value}`}>
+                          <Icon
+                            cursor="pointer"
+                            as={MdEdit}
+                            w="18px"
+                            h="18px"
+                            mr="2"
+                          />
+                        </Link>
+                        <Icon
+                          onClick={() => handleDeleteClick(cell.value)}
+                          cursor="pointer"
+                          as={MdDelete}
+                          w="18px"
+                          h="18px"
+                          color="red.400"
+                        />
+                      </>
                     );
                   }
                   return (

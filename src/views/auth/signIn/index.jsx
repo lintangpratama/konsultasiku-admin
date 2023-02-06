@@ -25,6 +25,10 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 // Chakra imports
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
   Box,
   Button,
   Checkbox,
@@ -66,9 +70,39 @@ function SignIn() {
     { bg: "whiteAlpha.200" }
   );
   const [show, setShow] = React.useState(false);
+  const [error, setError] = React.useState(false);
+  const [input, setInput] = React.useState({
+    username: "",
+    pass: "",
+  });
   const handleClick = () => setShow(!show);
+  const handleChange = (e) => {
+    setInput({
+      ...input,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleSubmit = (e) => {
+    if (
+      input.username === "admin" &&
+      input.pass === "16bddd1f588a971a2a19d6a2cab85d92"
+    ) {
+      localStorage.setItem(
+        "admin-konsultasiku",
+        (Math.random() + 1).toString(36).substring(7)
+      );
+      window.location.href = "/#/admin/default";
+    } else {
+      setError(true);
+    }
+  };
   return (
-    <DefaultAuth illustrationBackground={"https://app.konsultasiku.com/_next/image?url=%2Fimg%2Fbg.jpg&w=1200&q=75"} image={illustration}>
+    <DefaultAuth
+      illustrationBackground={
+        "https://app.konsultasiku.com/_next/image?url=%2Fimg%2Fbg.jpg&w=1200&q=75"
+      }
+      image={illustration}
+    >
       <Flex
         maxW={{ base: "100%", md: "max-content" }}
         w="100%"
@@ -83,6 +117,13 @@ function SignIn() {
         flexDirection="column"
       >
         <Box me="auto">
+          {error ? (
+            <Alert status="error" width="full" mb={10}>
+              <AlertIcon />
+              There was an error processing your request. Invalid credentials!
+            </Alert>
+          ) : null}
+
           <Heading color={textColor} fontSize="36px" mb="10px">
             Sign In
           </Heading>
@@ -116,15 +157,18 @@ function SignIn() {
               color={textColor}
               mb="8px"
             >
-              Email<Text color={brandStars}>*</Text>
+              Username<Text color={brandStars}>*</Text>
             </FormLabel>
             <Input
               isRequired={true}
               variant="auth"
               fontSize="sm"
               ms={{ base: "0px", md: "0px" }}
-              type="email"
-              placeholder="mail@simmmple.com"
+              type="text"
+              placeholder="mail"
+              name="username"
+              value={input.username}
+              onChange={(e) => handleChange(e)}
               mb="24px"
               fontWeight="500"
               size="lg"
@@ -144,6 +188,9 @@ function SignIn() {
                 fontSize="sm"
                 placeholder="Min. 8 characters"
                 mb="24px"
+                name="pass"
+                value={input.pass}
+                onChange={(e) => handleChange(e)}
                 size="lg"
                 type={show ? "text" : "password"}
                 variant="auth"
@@ -157,15 +204,20 @@ function SignIn() {
                 />
               </InputRightElement>
             </InputGroup>
-            <Flex justifyContent="space-between" align="center" mb="24px">
-            </Flex>
+            <Flex
+              justifyContent="space-between"
+              align="center"
+              mb="24px"
+            ></Flex>
             <Button
               fontSize="sm"
               variant="brand"
               fontWeight="500"
+              type="submit"
               w="100%"
               h="50"
               mb="24px"
+              onClick={handleSubmit}
             >
               Sign In
             </Button>

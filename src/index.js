@@ -8,6 +8,8 @@ import RTLLayout from "layouts/rtl";
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "theme/theme";
 import { ThemeEditorProvider } from "@hypertheme-editor/chakra-ui";
+import ConselorForm from "views/admin/ConselorForm";
+import ConselorFormEdit from "views/admin/ConselorFormEdit";
 
 ReactDOM.render(
   <ChakraProvider theme={theme}>
@@ -18,6 +20,8 @@ ReactDOM.render(
             <Route path={`/auth`} component={AuthLayout} />
             <Route path={`/admin`} component={AdminLayout} />
             <Route path={`/rtl`} component={RTLLayout} />
+            <Route path={`/add-conselor`} component={ConselorForm} />
+            <Route path={`/edit-conselor/:id`} component={ConselorFormEdit} />
             <Redirect from='/' to='/admin' />
           </Switch>
         </HashRouter>
