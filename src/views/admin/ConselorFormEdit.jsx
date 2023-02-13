@@ -88,7 +88,7 @@ export default function ConselorForm() {
       };
       getConselors();
     }
-  }, []);
+  }, [id]);
   return (
     <Flex
       maxW={{ base: "100%", md: "max-content" }}
