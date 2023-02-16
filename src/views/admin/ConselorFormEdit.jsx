@@ -52,7 +52,9 @@ export default function ConselorForm() {
       let data = input;
       data = {
         ...data,
-        jabatan_conselor: data.jabatan_conselor.split(","),
+        jabatan_conselor: Array.isArray(data.jabatan_conselor)
+          ? data.jabatan_conselor
+          : data.jabatan_conselor.split(","),
         harga: parseInt(data.harga),
       };
       console.log(data);
@@ -62,16 +64,9 @@ export default function ConselorForm() {
         axios
           .put(`https://api.andil.id/konsultasiku/conselor/${id}`, data)
           .then((data) => {
-            setSuccess("Daa konselor berhasil diubah!");
+            setSuccess("Data konselor berhasil diubah!");
             setError(null);
-            setInput({
-              nama_conselor: "",
-              jabatan_conselor: "",
-              description: "",
-              no_himpsi: "",
-              no_izin: "",
-              harga: "",
-            });
+            window.location.href = "/"
           })
           .catch((err) => console.log(err));
       }
