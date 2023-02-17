@@ -42,43 +42,47 @@ export default function ColumnsTable(props) {
     headerGroups,
     page,
     prepareRow,
-    initialState,
+    // initialState,
   } = tableInstance;
-  initialState.pageSize = 5;
+  // initialState.pageSize = 5;
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
   return (
     <Card
-      direction='column'
-      w='100%'
-      px='0px'
-      overflowX={{ sm: "scroll", lg: "hidden" }}>
-      <Flex px='25px' justify='space-between' mb='20px' align='center'>
+      direction="column"
+      w="100%"
+      px="0px"
+      overflowX={{ sm: "scroll", lg: "hidden" }}
+    >
+      <Flex px="25px" justify="space-between" mb="20px" align="center">
         <Text
           color={textColor}
-          fontSize='22px'
-          fontWeight='700'
-          lineHeight='100%'>
+          fontSize="22px"
+          fontWeight="700"
+          lineHeight="100%"
+        >
           Incoming Patients
         </Text>
         <Menu />
       </Flex>
-      <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
+      <Table {...getTableProps()} variant="simple" color="gray.500" mb="24px">
         <Thead>
           {headerGroups.map((headerGroup, index) => (
             <Tr {...headerGroup.getHeaderGroupProps()} key={index}>
               {headerGroup.headers.map((column, index) => (
                 <Th
                   {...column.getHeaderProps(column.getSortByToggleProps())}
-                  pe='10px'
+                  pe="10px"
                   key={index}
-                  borderColor={borderColor}>
+                  borderColor={borderColor}
+                >
                   <Flex
-                    justify='space-between'
-                    align='center'
+                    justify="space-between"
+                    align="center"
                     fontSize={{ sm: "10px", lg: "12px" }}
-                    color='gray.400'>
+                    color="gray.400"
+                  >
                     {column.render("Header")}
                   </Flex>
                 </Th>
@@ -95,34 +99,42 @@ export default function ColumnsTable(props) {
                   let data = "";
                   if (cell.column.Header === "NAME") {
                     data = (
-                      <Flex align='center'>
-                        <Text color={textColor} fontSize='sm' fontWeight='700'>
+                      <Flex align="center">
+                        <Text color={textColor} fontSize="sm" fontWeight="700">
                           {cell.value}
                         </Text>
                       </Flex>
                     );
                   } else if (cell.column.Header === "PHONE") {
                     data = (
-                      <Flex align='center'>
+                      <Flex align="center">
                         <Text
-                          me='10px'
+                          me="10px"
                           color={textColor}
-                          fontSize='sm'
-                          fontWeight='700'>
+                          fontSize="sm"
+                          fontWeight="700"
+                        >
                           {cell.value}
                         </Text>
                       </Flex>
                     );
                   } else if (cell.column.Header === "SYMPTOMPS") {
                     data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                        {cell.value}
+                      </Text>
+                    );
+                  } else if (cell.column.Header === "CONSELOR") {
+                    data = (
+                      <Text color={textColor} fontSize="sm" fontWeight="700">
                         {cell.value}
                       </Text>
                     );
                   } else if (cell.column.Header === "DATE") {
+                    const date = new Date(cell.value).toJSON();
                     data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value}
+                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                        {new Date(date).toDateString()}
                       </Text>
                     );
                   }
@@ -132,7 +144,8 @@ export default function ColumnsTable(props) {
                       key={index}
                       fontSize={{ sm: "14px" }}
                       minW={{ sm: "150px", md: "200px", lg: "auto" }}
-                      borderColor='transparent'>
+                      borderColor="transparent"
+                    >
                       {data}
                     </Td>
                   );

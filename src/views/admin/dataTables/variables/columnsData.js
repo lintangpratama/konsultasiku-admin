@@ -9,10 +9,14 @@ export const columnsDataColumns = [
   },
   {
     Header: "SYMPTOMPS",
-    accessor: "symptomps",
+    accessor: "complaint",
+  },
+  {
+    Header: "CONSELOR",
+    accessor: "psycolog_name",
   },
   {
     Header: "DATE",
-    accessor: "date",
+    accessor: "consultation_date",
   },
 ];
