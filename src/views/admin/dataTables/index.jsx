@@ -30,18 +30,17 @@ import axios from "axios";
 export default function Settings() {
   const [data, setData] = useState([
     {
-      id: "63cffca19a46c81a3b7705ac",
-      name: "Wahahaha",
-      phone: "01230128301820318",
-      email: "rofim58@gmail.com",
+      id: "",
+      name: "",
+      phone: "",
+      email: "",
       psycolog_name: "Hikmatun Balighoh, M.Psi., Psikolog",
-      amount: 99000,
+      amount: 0,
       consultation_date: "2023-01-31T00:00:00Z",
-      complaint: "Suka suka",
+      complaint: "",
       invoice_id: "",
       expiry_date: "2023-01-25T00:00:00Z",
-      payment_link:
-        "https://checkout-staging.xendit.co/web/63cffca19a46c81a3b7705ac",
+      payment_link: "",
     },
   ]);
   // Chakra Color Mode
@@ -49,7 +48,7 @@ export default function Settings() {
     if (!localStorage.getItem("admin-konsultasiku")) {
       window.location.href = "/#/auth/sign-in";
     } else {
-      axios.get("https://api.andil.id/konsultasiku/orders").then((res) => {
+      axios.get("https://api.andil.id/konsultasiku/orders?limit=1000").then((res) => {
         setData(res.data.conselors);
       });
     }
@@ -61,10 +60,7 @@ export default function Settings() {
         columns={{ sm: 1 }}
         spacing={{ base: "20px", xl: "20px" }}
       >
-        <ColumnsTable
-          columnsData={columnsDataColumns}
-          tableData={data}
-        />
+        <ColumnsTable columnsData={columnsDataColumns} tableData={data} />
       </SimpleGrid>
     </Box>
   );

@@ -42,9 +42,9 @@ export default function ColumnsTable(props) {
     headerGroups,
     page,
     prepareRow,
-    // initialState,
+    initialState,
   } = tableInstance;
-  // initialState.pageSize = 5;
+  initialState.pageSize = 1000;
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
