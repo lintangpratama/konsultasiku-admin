@@ -24,7 +24,6 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import ColumnsTable from "views/admin/dataTables/components/ColumnsTable";
 import { columnsDataColumns } from "views/admin/dataTables/variables/columnsData";
-import tableDataColumns from "views/admin/dataTables/variables/tableDataColumns.json";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
