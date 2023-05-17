@@ -123,7 +123,7 @@ export default function HeaderLinks(props) {
               color="red.400"
               borderRadius="8px"
               onClick={() => {
-                localStorage.removeItem("admin-konsultasiku");
+                localStorage.removeItem("jobspot-admin");
                 window.location.href = "/#/auth/sign-in";
               }}
               px="14px"

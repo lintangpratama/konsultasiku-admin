@@ -1,40 +1,40 @@
 export const columnsDataCheck = [
   {
-    Header: "NAME",
-    accessor: "name",
+    Header: "TITLE",
+    accessor: "title",
   },
   {
-    Header: "PROGRESS",
-    accessor: "progress",
+    Header: "COMPANY",
+    accessor: "company",
   },
   {
-    Header: "QUANTITY",
-    accessor: "quantity",
+    Header: "EMAIL",
+    accessor: "email",
   },
   {
-    Header: "DATE",
-    accessor: "date",
+    Header: "LOCATION",
+    accessor: "location",
   },
 ];
 export const columnsDataComplex = [
   {
-    Header: "NAME",
-    accessor: "nama_conselor",
+    Header: "TITLE",
+    accessor: "title",
   },
   {
-    Header: "PRICE",
-    accessor: "harga",
+    Header: "COMPANY",
+    accessor: "company_name",
   },
   {
-    Header: "HIMPSI NUMBER",
-    accessor: "no_himpsi",
+    Header: "EMAIL",
+    accessor: "email",
   },
   {
-    Header: "PERMISSION NUMBER",
-    accessor: "no_izin",
+    Header: "LOCATION",
+    accessor: "location",
   },
   {
     Header: "ACTIONS",
-    accessor: "id_conselor",
-  }
+    accessor: "id",
+  },
 ];

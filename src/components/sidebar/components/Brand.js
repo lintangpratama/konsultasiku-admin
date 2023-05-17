@@ -18,7 +18,7 @@ export function SidebarBrand() {
         pt="18px"
         pb="44px"
       >
-        Konsultasiku Admin
+        Jobspot Admin
       </Text>
       <HSeparator mb="20px" />
     </Flex>

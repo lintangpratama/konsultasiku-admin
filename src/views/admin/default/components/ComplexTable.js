@@ -29,7 +29,10 @@ export default function ColumnsTable(props) {
   const { columnsData, tableData } = props;
 
   const columns = useMemo(() => columnsData, [columnsData]);
-  const data = useMemo(() => tableData === null ? [] : tableData, [tableData]);
+  const data = useMemo(
+    () => (tableData === null ? [] : tableData),
+    [tableData]
+  );
 
   const tableInstance = useTable(
     {
@@ -49,7 +52,11 @@ export default function ColumnsTable(props) {
 
   const handleDeleteClick = (id) => {
     axios
-      .delete(`https://api.andil.id/konsultasiku/conselor/${id}`, data)
+      .delete(`https://api.qerja.id/api/job/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jobspot-admin")}`,
+        },
+      })
       .then((data) => {
         window.location.reload();
       })
@@ -69,7 +76,7 @@ export default function ColumnsTable(props) {
           fontWeight="700"
           lineHeight="100%"
         >
-          Registered Conselors
+          Job List
         </Text>
         <Link to="/add-conselor">
           <Icon
@@ -112,25 +119,25 @@ export default function ColumnsTable(props) {
               <Tr {...row.getRowProps()} key={index}>
                 {row.cells.map((cell, index) => {
                   let data = "";
-                  if (cell.column.Header === "NAME") {
+                  if (cell.column.Header === "TITLE") {
                     data = (
                       <Text color={textColor} fontSize="sm" fontWeight="700">
                         {cell.value}
                       </Text>
                     );
-                  } else if (cell.column.Header === "PRICE") {
-                    data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
-                        Rp{cell.value}
-                      </Text>
-                    );
-                  } else if (cell.column.Header === "HIMPSI NUMBER") {
+                  } else if (cell.column.Header === "COMPANY") {
                     data = (
                       <Text color={textColor} fontSize="sm" fontWeight="700">
                         {cell.value}
                       </Text>
                     );
-                  } else if (cell.column.Header === "PERMISSION NUMBER") {
+                  } else if (cell.column.Header === "EMAIL") {
+                    data = (
+                      <Text color={textColor} fontSize="sm" fontWeight="700">
+                        {cell.value}
+                      </Text>
+                    );
+                  } else if (cell.column.Header === "LOCATION") {
                     data = (
                       <Text color={textColor} fontSize="sm" fontWeight="700">
                         {cell.value}

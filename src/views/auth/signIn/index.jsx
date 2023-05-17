@@ -21,8 +21,9 @@
 
 */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import axios from "axios";
 // Chakra imports
 import {
   Alert,
@@ -83,19 +84,23 @@ function SignIn() {
     });
   };
   const handleSubmit = (e) => {
-    if (
-      input.username === "admin" &&
-      input.pass === "16bddd1f588a971a2a19d6a2cab85d92"
-    ) {
-      localStorage.setItem(
-        "admin-konsultasiku",
-        (Math.random() + 1).toString(36).substring(7)
-      );
-      window.location.href = "/#/admin/default";
-    } else {
-      setError(true);
-    }
+    axios
+      .post("https://api.qerja.id/api/auth/login", {
+        username: input.username,
+        password: input.pass,
+      })
+      .then((res) => {
+        console.log(res.data.data.token)
+        localStorage.setItem("jobspot-admin", res.data.data.token);
+        document.location.href = "/"
+      })
+      .catch((err) => console.log(err));
   };
+  useEffect(() => {
+    if(localStorage.getItem("jobspot-admin")) {
+      document.location.href = "/"
+    }
+  }, [])
   return (
     <DefaultAuth
       illustrationBackground={

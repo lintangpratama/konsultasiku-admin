@@ -9,25 +9,36 @@ import {
   Heading,
   Icon,
   Input,
-  InputGroup,
+  ButtonOptions,
+  Select,
   Text,
   Textarea,
 } from "@chakra-ui/react";
+import { convertToHTML } from "draft-convert";
 import axios from "axios";
 import React, { useEffect } from "react";
 import { MdChevronLeft } from "react-icons/md";
 import { useHistory } from "react-router-dom";
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 export default function ConselorForm() {
   const [input, setInput] = React.useState({
-    nama_conselor: "",
-    jabatan_conselor: "",
+    category_id: "",
+    company_logo: "",
+    company_name: "",
+    location: "",
+    title: "",
+    type: "",
+    banner: "",
     description: "",
-    no_himpsi: "",
-    no_izin: "",
-    harga: "",
+    email: "",
+    website_url: "",
   });
+  const [editorState, setEditorState] = React.useState();
   const [error, setError] = React.useState();
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [jobCategories, setJobCategories] = React.useState();
   const [success, setSuccess] = React.useState();
   let history = useHistory();
   const handleChange = (e) => {
@@ -37,53 +48,81 @@ export default function ConselorForm() {
     });
     console.log(input);
   };
+  const handleImageLogoChange = (e) => {
+    console.log(e.target.files);
+    setInput({
+      ...input,
+      [e.target.name]: e.target.files[0],
+    });
+  };
+  const handleImageChange = (e) => {
+    console.log(e.target.files);
+    setInput({
+      ...input,
+      [e.target.name]: e.target.files,
+    });
+  };
   const handleClick = (e) => {
-    if (
-      !input.nama_conselor ||
-      !input.harga ||
-      !input.no_himpsi ||
-      !input.description ||
-      !input.jabatan_conselor ||
-      !input.no_izin
-    ) {
+    if (!input.title) {
       setError("Isi semua data terlebih dahulu!");
     } else {
-      let data = input;
-      data = {
-        ...data,
-        jabatan_conselor: data.jabatan_conselor.split(","),
-        harga: parseInt(data.harga),
-      };
-      console.log(data);
-      if (!Array.isArray(data.jabatan_conselor)) {
-        setError("Isi jabatan dengan format yang benar");
-      } else {
-        axios
-          .post("https://api.andil.id/konsultasiku/conselor", data)
-          .then((data) => {
-            setSuccess("Konselor berhasil ditambahkan!");
-            setError(null);
-            setInput({
-              nama_conselor: "",
-              jabatan_conselor: "",
-              description: "",
-              no_himpsi: "",
-              no_izin: "",
-              harga: "",
-            });
-          })
-          .catch((err) => console.log(err));
-      }
+      setIsLoading(true);
+      console.log(input);
+      console.log(convertToHTML(editorState.getCurrentContent()));
+      const data = new FormData();
+      data.append("category_id", input.category_id);
+      data.append("company_logo", input.company_logo);
+      data.append("company_name", input.company_name);
+      data.append("location", input.location);
+      data.append("title", input.title);
+      data.append("type", input.type);
+      data.append("banner", input.banner);
+      data.append(
+        "description",
+        convertToHTML(editorState.getCurrentContent())
+      );
+      data.append("email", input.email);
+      data.append("website_url", input.website_url);
+      axios
+        .post("https://api.qerja.id/api/job", data, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jobspot-admin")}`,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          setSuccess("Pekerjaan berhasil ditambahkan!");
+          setIsLoading(false);
+          setError(null);
+          setInput({
+            category_id: "",
+            company_logo: "",
+            company_name: "",
+            location: "",
+            title: "",
+            type: "",
+            banner: "",
+            description: "",
+            email: "",
+            website_url: "",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
     }
   };
   useEffect(() => {
-    if (!localStorage.getItem("admin-konsultasiku")) {
+    if (!localStorage.getItem("jobspot-admin")) {
       window.location.href = "/#/auth/sign-in";
     } else {
-      // const getConselors = () => {
-      //   axios.post("https://api.andil.id/konsultasiku/conselors", input);
-      // };
-      // getConselors();
+      const getJobCategory = () => {
+        axios.get("https://api.qerja.id/api/job-categories").then((res) => {
+          setJobCategories(res.data.data);
+        });
+      };
+      getJobCategory();
     }
   }, []);
   return (
@@ -119,10 +158,10 @@ export default function ConselorForm() {
         </Flex>
         <Box me="auto" mt="5">
           <Heading fontSize="36px" mb="10px">
-            Conselor Form
+            Job Posting Form
           </Heading>
           <Text mb="36px" ms="4px" fontWeight="400" fontSize="md">
-            Enter the conselor information below!
+            Enter the Job information below!
           </Text>
         </Box>
         <FormControl>
@@ -134,7 +173,7 @@ export default function ConselorForm() {
             color="GrayText"
             mb="8px"
           >
-            Nama Konselor<Text color="black">*</Text>
+            Title Pekerjaan<Text color="black">*</Text>
           </FormLabel>
           <Input
             isRequired={true}
@@ -142,34 +181,99 @@ export default function ConselorForm() {
             fontSize="sm"
             ms={{ base: "0px", md: "0px" }}
             type="text"
-            placeholder="Ex: Sinta, S.Psi."
-            name="nama_conselor"
-            value={input.nama_conselor}
+            placeholder="Ex: Customer Service"
+            name="title"
+            value={input.title}
             onChange={(e) => handleChange(e)}
             mb="24px"
             fontWeight="500"
             size="lg"
           />
-          <FormLabel ms="4px" fontSize="sm" fontWeight="500" display="flex">
-            Jabatan<Text>*</Text>
+          <FormLabel
+            display="flex"
+            ms="4px"
+            fontSize="sm"
+            fontWeight="500"
+            color="GrayText"
+            mb="8px"
+          >
+            Kategori Pekerjaan <Text color="black">*</Text>
           </FormLabel>
-          <InputGroup size="md" flexDirection="column">
-            <Input
-              isRequired={true}
-              fontSize="sm"
-              placeholder="Ex: Dosen,Psikolog Klinis,Psikolog Anak"
-              mb="8px"
-              name="jabatan_conselor"
-              value={input.jabatan_conselor}
-              onChange={(e) => handleChange(e)}
-              size="lg"
-              variant="auth"
-            />
-            <Text fontSize="smaller" color="#422AFB" mb="24px">
-              Jika jabatan lebih dari satu, pisahkan dengan dengan tanda koma
-              dan spasi (ex: "Dosen,Psikolog")
-            </Text>
-          </InputGroup>
+          <Select
+            isRequired={true}
+            variant="auth"
+            fontSize="sm"
+            ms={{ base: "0px", md: "0px" }}
+            type="text"
+            name="category_id"
+            value={input.category_id}
+            onChange={(e) => handleChange(e)}
+            mb="24px"
+            fontWeight="500"
+            size="lg"
+          >
+            {jobCategories?.map((data) => (
+              <option id={data.id} value={data.id}>
+                {data.name}
+              </option>
+            ))}
+          </Select>
+
+          <FormLabel
+            display="flex"
+            ms="4px"
+            fontSize="sm"
+            fontWeight="500"
+            color="GrayText"
+            mb="8px"
+          >
+            Tipe Pekerjaan <Text color="black">*</Text>
+          </FormLabel>
+          <Select
+            isRequired={true}
+            variant="auth"
+            fontSize="sm"
+            ms={{ base: "0px", md: "0px" }}
+            type="text"
+            name="type"
+            value={input.type}
+            onChange={(e) => handleChange(e)}
+            mb="24px"
+            fontWeight="500"
+            size="lg"
+          >
+            <option value="Work From Office">Work From Office (WFO)</option>
+            <option value="Work From Home">Work From Home (WFH)</option>
+            <option value="Hybrid">Hybrid</option>
+          </Select>
+
+          <FormLabel
+            display="flex"
+            ms="4px"
+            fontSize="sm"
+            fontWeight="500"
+            color="GrayText"
+            mb="8px"
+          >
+            Poster Pekerjaan <Text color="black">*</Text>
+          </FormLabel>
+          <Input
+            id="banner"
+            isRequired={true}
+            className="custom-file-input"
+            style={{ paddingTop: "8px" }}
+            variant="auth"
+            fontSize="sm"
+            ms={{ base: "0px", md: "0px" }}
+            type="file"
+            name="banner"
+            onChange={(e) => handleImageChange(e)}
+            mb="24px"
+            fontWeight="500"
+            size="lg"
+            multiple
+          />
+
           <FormLabel
             display="flex"
             ms="4px"
@@ -180,17 +284,12 @@ export default function ConselorForm() {
           >
             Deskripsi<Text color="black">*</Text>
           </FormLabel>
-          <Textarea
-            isRequired={true}
-            fontSize="sm"
-            ms={{ base: "0px", md: "0px" }}
-            type="text"
-            placeholder="Ex: Sinta adalah seorang Psikolog anak dengan pengalaman lebih dari 3 tahun"
-            name="description"
-            value={input.description}
-            onChange={(e) => handleChange(e)}
-            mb="24px"
-            size="lg"
+          <Editor
+            editorState={editorState}
+            toolbarClassName="toolbarClassName"
+            wrapperClassName="wrapperClassName"
+            editorClassName="editor"
+            onEditorStateChange={setEditorState}
           />
           <FormLabel
             display="flex"
@@ -200,7 +299,7 @@ export default function ConselorForm() {
             color="GrayText"
             mb="8px"
           >
-            Nomor HIMPSI<Text color="black">*</Text>
+            Nama Perusahaan <Text color="black">*</Text>
           </FormLabel>
           <Input
             isRequired={true}
@@ -208,14 +307,15 @@ export default function ConselorForm() {
             fontSize="sm"
             ms={{ base: "0px", md: "0px" }}
             type="text"
-            placeholder="Masukkan nomor HIMPSI"
-            name="no_himpsi"
-            value={input.no_himpsi}
+            placeholder="Ex: Tokopedia"
+            name="company_name"
+            value={input.company_name}
             onChange={(e) => handleChange(e)}
             mb="24px"
             fontWeight="500"
             size="lg"
           />
+
           <FormLabel
             display="flex"
             ms="4px"
@@ -224,22 +324,24 @@ export default function ConselorForm() {
             color="GrayText"
             mb="8px"
           >
-            Nomor Izin<Text color="black">*</Text>
+            Logo Perusahaan <Text color="black">*</Text>
           </FormLabel>
           <Input
+            id="logo"
             isRequired={true}
+            className="custom-file-input"
+            style={{ paddingTop: "8px" }}
             variant="auth"
             fontSize="sm"
             ms={{ base: "0px", md: "0px" }}
-            type="text"
-            placeholder="Masukkan nomor izin"
-            name="no_izin"
-            value={input.no_izin}
-            onChange={(e) => handleChange(e)}
+            type="file"
+            name="company_logo"
+            onChange={(e) => handleImageLogoChange(e)}
             mb="24px"
             fontWeight="500"
             size="lg"
           />
+
           <FormLabel
             display="flex"
             ms="4px"
@@ -248,22 +350,73 @@ export default function ConselorForm() {
             color="GrayText"
             mb="8px"
           >
-            Harga<Text color="black">*</Text>
+            Lokasi <Text color="black">*</Text>
           </FormLabel>
           <Input
             isRequired={true}
             variant="auth"
             fontSize="sm"
             ms={{ base: "0px", md: "0px" }}
-            type="number"
-            placeholder="Ex: 99000"
-            name="harga"
-            value={input.harga}
+            type="text"
+            placeholder="Ex: Kota Tangerang, Banten"
+            name="location"
+            value={input.location}
             onChange={(e) => handleChange(e)}
             mb="24px"
             fontWeight="500"
             size="lg"
           />
+
+          <FormLabel
+            display="flex"
+            ms="4px"
+            fontSize="sm"
+            fontWeight="500"
+            color="GrayText"
+            mb="8px"
+          >
+            Email <Text color="black">*</Text>
+          </FormLabel>
+          <Input
+            isRequired={true}
+            variant="auth"
+            fontSize="sm"
+            ms={{ base: "0px", md: "0px" }}
+            type="text"
+            placeholder="Ex: career@tokopedia.com"
+            name="email"
+            value={input.email}
+            onChange={(e) => handleChange(e)}
+            mb="24px"
+            fontWeight="500"
+            size="lg"
+          />
+
+          <FormLabel
+            display="flex"
+            ms="4px"
+            fontSize="sm"
+            fontWeight="500"
+            color="GrayText"
+            mb="8px"
+          >
+            Website Lamaran Pekerjaan (opsional) <Text color="black"></Text>
+          </FormLabel>
+          <Input
+            isRequired={true}
+            variant="auth"
+            fontSize="sm"
+            ms={{ base: "0px", md: "0px" }}
+            type="text"
+            placeholder="Ex: career.tokopedia.com"
+            name="website_url"
+            value={input.website_url}
+            onChange={(e) => handleChange(e)}
+            mb="24px"
+            fontWeight="500"
+            size="lg"
+          />
+
           {error ? (
             <Alert status="error" width="full">
               <AlertIcon />
@@ -287,7 +440,7 @@ export default function ConselorForm() {
             mb="24px"
             onClick={() => handleClick()}
           >
-            Tambah Konselor
+            {!isLoading ? "Post Pekerjaan" : "Uploading..."}
           </Button>
         </FormControl>
       </Flex>

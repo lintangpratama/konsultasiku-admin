@@ -39,14 +39,16 @@ export default function UserReports() {
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
   const [data, setData] = useState([]);
   useEffect(() => {
-    if (!localStorage.getItem("admin-konsultasiku")) {
+    if (!localStorage.getItem("jobspot-admin")) {
       window.location.href = "/#/auth/sign-in";
     } else {
       const getConselors = () => {
         axios
-          .get("https://api.andil.id/konsultasiku/conselors")
+          .get("https://api.qerja.id/api/jobs")
           .then((res) => {
-            setData(res.data.conselors.ResponseConselor)})
+            console.log(res.data.data);
+            setData(res.data.data);
+          })
           .catch((err) => console.log(err));
       };
       getConselors();
@@ -71,27 +73,12 @@ export default function UserReports() {
               }
             />
           }
-          name="Transactions"
+          name="Job Posted"
           value="234"
-        />
-        <MiniStatistics
-          startContent={
-            <IconBox
-              w="56px"
-              h="56px"
-              bg={boxBg}
-              icon={<Icon w="32px" h="32px" as={MdPerson} color={brandColor} />}
-            />
-          }
-          name="Conselors"
-          value={data !== null ? data.length : "-"}
         />
       </SimpleGrid>
       <SimpleGrid columns={{ base: 1, md: 1, xl: 1 }} gap="20px" mb="20px">
-        <ComplexTable
-          columnsData={columnsDataComplex}
-          tableData={data}
-        />
+        <ComplexTable columnsData={columnsDataComplex} tableData={data} />
         {/* <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px">
           <MiniCalendar h="100%" minW="100%" selectRange={false} />
         </SimpleGrid> */}
