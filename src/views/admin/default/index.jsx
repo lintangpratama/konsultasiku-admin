@@ -44,7 +44,7 @@ export default function UserReports() {
     } else {
       const getConselors = () => {
         axios
-          .get("https://api.qerja.id/api/jobs")
+          .get("https://api.qerja.id/api/jobs?limit=1000")
           .then((res) => {
             console.log(res.data.data);
             setData(res.data.data);

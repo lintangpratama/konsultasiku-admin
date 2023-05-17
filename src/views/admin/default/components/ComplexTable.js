@@ -43,9 +43,11 @@ export default function ColumnsTable(props) {
     useSortBy,
     usePagination
   );
+  console.log(tableInstance);
 
-  const { getTableProps, getTableBodyProps, headerGroups, page, prepareRow } =
+  const { getTableProps, getTableBodyProps, headerGroups, page, prepareRow, initialState } =
     tableInstance;
+  initialState.pageSize = 1000;
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");

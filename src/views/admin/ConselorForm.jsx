@@ -9,10 +9,8 @@ import {
   Heading,
   Icon,
   Input,
-  ButtonOptions,
   Select,
   Text,
-  Textarea,
 } from "@chakra-ui/react";
 import { convertToHTML } from "draft-convert";
 import axios from "axios";
@@ -59,7 +57,7 @@ export default function ConselorForm() {
     console.log(e.target.files);
     setInput({
       ...input,
-      [e.target.name]: e.target.files,
+      [e.target.name]: Array.from(e.target.files),
     });
   };
   const handleClick = (e) => {
@@ -76,13 +74,16 @@ export default function ConselorForm() {
       data.append("location", input.location);
       data.append("title", input.title);
       data.append("type", input.type);
-      data.append("banner", input.banner);
+      input.banner.forEach((img) => {
+        data.append("banner", img);
+      });
       data.append(
         "description",
         convertToHTML(editorState.getCurrentContent())
       );
       data.append("email", input.email);
       data.append("website_url", input.website_url);
+      console.log(data);
       axios
         .post("https://api.qerja.id/api/job", data, {
           headers: {
