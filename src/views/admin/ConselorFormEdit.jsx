@@ -9,12 +9,12 @@ import {
   Heading,
   Icon,
   Input,
-  ButtonOptions,
   Select,
   Text,
-  Textarea,
 } from "@chakra-ui/react";
 import { convertToHTML } from "draft-convert";
+import { convertFromRaw, convertFromHTML } from "draft-js";
+import { stateFromHTML } from "draft-js-import-html";
 import axios from "axios";
 import React, { useEffect } from "react";
 import { MdChevronLeft } from "react-icons/md";
@@ -22,6 +22,8 @@ import { useHistory, useParams } from "react-router-dom";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState } from "draft-js";
+import { Image } from "@chakra-ui/react";
+import { MdDelete } from "react-icons/md";
 
 export default function ConselorForm() {
   const [input, setInput] = React.useState({
@@ -62,28 +64,19 @@ export default function ConselorForm() {
     } else {
       setIsLoading(true);
       console.log(input);
-      console.log(convertToHTML(editorState.getCurrentContent()));
-      const data = new FormData();
-      data.append("category_id", input.category_id);
-      data.append("location", input.location);
-      data.append("title", input.title);
-      data.append("type", input.type);
-      data.append("banner", input.banner);
-      data.append(
-        "description",
-        convertToHTML(editorState.getCurrentContent())
-      );
-      data.append("email", input.email);
-      data.append("website_url", input.website_url);
+      setInput({
+        ...formData,
+        description: convertToHTML(editorState.getCurrentContent()),
+      });
       axios
-        .post("https://api.qerja.id/api/job", data, {
+        .patch(`https://api.qerja.id/api/job/${id}`, input, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("jobspot-admin")}`,
           },
         })
         .then((res) => {
           console.log(res);
-          setSuccess("Pekerjaan berhasil ditambahkan!");
+          setSuccess("Pekerjaan berhasil diubah!");
           setIsLoading(false);
           setError(null);
           setInput({
@@ -116,7 +109,9 @@ export default function ConselorForm() {
         axios.get(`https://api.qerja.id/api/job/${id}`).then((res) => {
           setFormData(res.data.data);
           setInput(res.data.data);
-          setEditorState();
+          const contentState = stateFromHTML(res.data.data.description);
+          const newEditorState = EditorState.createWithContent(contentState);
+          setEditorState(newEditorState);
         });
       };
       getFormData();
@@ -217,7 +212,6 @@ export default function ConselorForm() {
               </option>
             ))}
           </Select>
-
           <FormLabel
             display="flex"
             ms="4px"
@@ -245,7 +239,6 @@ export default function ConselorForm() {
             <option value="Work From Home">Work From Home (WFH)</option>
             <option value="Hybrid">Hybrid</option>
           </Select>
-
           <FormLabel
             display="flex"
             ms="4px"
@@ -256,23 +249,29 @@ export default function ConselorForm() {
           >
             Poster Pekerjaan <Text color="black">*</Text>
           </FormLabel>
-          <Input
-            id="banner"
-            isRequired={true}
-            className="custom-file-input"
-            style={{ paddingTop: "8px" }}
-            variant="auth"
-            fontSize="sm"
-            ms={{ base: "0px", md: "0px" }}
-            type="file"
-            name="banner"
-            onChange={(e) => handleImageChange(e)}
-            mb="24px"
-            fontWeight="500"
-            size="lg"
-            multiple
-          />
-
+          <Box mb={10}>
+            {formData?.banner.map((data, i) => (
+              <Flex>
+                <Image src={data} width={"full"} mb={5} />
+                <Icon
+                  onClick={() => {
+                    let arr = formData?.banner;
+                    arr.splice(i, 1);
+                    console.log(arr);
+                    setFormData({
+                      ...formData,
+                      banner: arr,
+                    });
+                  }}
+                  cursor="pointer"
+                  as={MdDelete}
+                  w="18px"
+                  h="18px"
+                  color="red.400"
+                />
+              </Flex>
+            ))}
+          </Box>
           <FormLabel
             display="flex"
             ms="4px"
